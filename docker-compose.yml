@@ -1,0 +1,50 @@
+services:
+  postgres:
+    container_name: ai4devs-postgres
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  backend:
+    container_name: ai4devs-backend
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+  frontend:
+    container_name: ai4devs-frontend
+    build:
+      context: ./frontend
+    # Map host port 80 to container port 80 since the final image uses nginx exposing port 80
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

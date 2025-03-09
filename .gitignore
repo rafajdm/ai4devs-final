@@ -1,0 +1,29 @@
+# General
+*.log
+.DS_Store
+
+# Environment variables (do NOT commit sensitive data)
+.env
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+
+# Backend specific
+/backend/__pycache__/
+
+# Node/React dependencies and builds
+/frontend/node_modules/
+/frontend/dist/
+/frontend/build/
+
+# IDE / Editor directories
+.vscode/
+.idea/
