@@ -1,3 +1,5 @@
 fastapi
 uvicorn[standard]
 python-dotenv
+playwright
+psycopg2-binary
