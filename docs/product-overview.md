@@ -18,7 +18,7 @@ The MVP focuses on delivering core functionality with minimal complexity:
 	•	Target: https://banco.santander.cl/beneficios
 	•	Handle JavaScript rendering with a headless browser (e.g., Playwright).
 	2.	Data Extraction
-	•	Required fields: Restaurant Name, Restaurant Logo Image, Valid Date(s), Discount Rate, Address, Expiration Date, Source.
+	•	Required fields: Restaurant Name, Restaurant Logo Image (path), Valid Date(s) (plain string), Discount Rate, Address, Expiration Date, Source.
 	•	Store in PostgreSQL for persistence.
 	3.	AI Agent
 	•	Integrate with LangGraph + Mistral.
@@ -92,16 +92,14 @@ The MVP focuses on delivering core functionality with minimal complexity:
 Column	Type	Description
 id	SERIAL (PK)	Unique promotion ID
 restaurant_name	VARCHAR	Name of the restaurant or brand
-logo_url	VARCHAR	Image URL for the restaurant’s logo
-valid_days	VARCHAR	Days of the week or date range (e.g., “Mon-Fri”)
+logo_path	VARCHAR	Path to the restaurant’s logo image
+valid_dates	VARCHAR	Plain string for valid date(s)
 discount_rate	VARCHAR	Promotion discount (e.g., “20%”)
 address	VARCHAR	Address or location of the restaurant
 expiration_date	DATE / VARCHAR	Promotion validity date if applicable
 source	VARCHAR	e.g., “Santander Chile”
 ai_summary	TEXT	Generated text from the AI agent
 created_at	TIMESTAMP	Timestamp of insertion
-
-
 
 ⸻
 
