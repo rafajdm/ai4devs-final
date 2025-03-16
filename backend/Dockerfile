@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y \
     libgbm1 \
     libxcb1 \
     libxkbcommon0 \
-    libasound2
+    libasound2 \
+    chromium-driver
     
 # Copy and install dependencies
 COPY requirements.txt requirements.txt

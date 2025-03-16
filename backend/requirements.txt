@@ -3,3 +3,6 @@ uvicorn[standard]
 python-dotenv
 playwright
 psycopg2-binary
+beautifulsoup4
+requests
+selenium

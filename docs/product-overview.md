@@ -89,17 +89,20 @@ The MVP focuses on delivering core functionality with minimal complexity:
 
 5.1 Promotions Table (PostgreSQL)
 
-Column	Type	Description
-id	SERIAL (PK)	Unique promotion ID
-restaurant_name	VARCHAR	Name of the restaurant or brand
-logo_path	VARCHAR	Path to the restaurant’s logo image
-valid_dates	VARCHAR	Plain string for valid date(s)
-discount_rate	VARCHAR	Promotion discount (e.g., “20%”)
-address	VARCHAR	Address or location of the restaurant
-expiration_date	DATE / VARCHAR	Promotion validity date if applicable
-source	VARCHAR	e.g., “Santander Chile”
-ai_summary	TEXT	Generated text from the AI agent
-created_at	TIMESTAMP	Timestamp of insertion
+Column	            Type	                Description (Not Null if applicable)
+id	                SERIAL (PK)	            Unique promotion ID
+restaurant_name	    VARCHAR	                Name of the restaurant (NOT NULL)
+logo_path	        VARCHAR	                Path to the restaurant’s logo image
+applicable_days_text	VARCHAR	            Plain string for applicable days
+discount_rate	    VARCHAR	                Promotion discount (e.g., “20%”)
+address	            VARCHAR	                Address or location of the restaurant
+valid_from	        DATE	                Promotion start date
+valid_until	        DATE	                Promotion end date
+valid_period_text	VARCHAR	                Textual representation of the valid period
+source	            VARCHAR	                e.g., “Santander Chile” (NOT NULL)
+region	            VARCHAR	                Region of the promotion
+ai_summary	        TEXT	                Generated text from the AI agent
+created_at	        TIMESTAMP	            Timestamp of insertion
 
 ⸻
 

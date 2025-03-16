@@ -10,6 +10,7 @@ ai4devs-final/
 ├── backend/            # Backend files
 │   ├── Dockerfile      # Dockerfile for backend
 │   ├── requirements.txt# Python dependencies
+│   ├── README.md       # Backend documentation
 │   └── ...             # Other backend files
 │
 ├── frontend/           # Frontend files
