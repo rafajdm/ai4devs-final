@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 from bs4 import BeautifulSoup, Tag  # modified import
 import logging
 from selenium import webdriver
@@ -30,18 +31,6 @@ def setup_driver():
     return driver
 
 
-def download_image(url, folder):
-    if not os.path.exists(folder):
-        os.makedirs(folder)
-    image_name = url.split("/")[-1]
-    image_path = os.path.join(folder, image_name)
-    response = requests.get(url)
-    if response.status_code == 200:
-        with open(image_path, "wb") as file:
-            file.write(response.content)
-    return image_path
-
-
 def store_promotions(promos):
     db_host = os.environ.get("DB_HOST", "localhost")
     db_name = os.environ.get("DB_NAME", "dbname")
@@ -56,32 +45,51 @@ def store_promotions(promos):
                     """
                     CREATE TABLE IF NOT EXISTS promotions (
                         id SERIAL PRIMARY KEY,
-                        restaurant_name TEXT,
-                        logo_path TEXT,
-                        applicable_days_text TEXT,
-                        region TEXT,
-                        address TEXT,
-                        valid_period_text TEXT,
-                        valid_from TEXT,
-                        valid_until TEXT
+                        restaurant_name VARCHAR NOT NULL,
+                        logo_path VARCHAR,
+                        applicable_days_text VARCHAR,
+                        discount_rate VARCHAR,
+                        address VARCHAR,
+                        valid_from DATE,
+                        valid_until DATE,
+                        valid_period_text VARCHAR,
+                        source VARCHAR NOT NULL,
+                        region VARCHAR,
+                        ai_summary TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                     """
                 )
                 for promo in promos:
                     cur.execute(
                         """
-                        INSERT INTO promotions (restaurant_name, logo_path, applicable_days_text, region, address, valid_period_text, valid_from, valid_until)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        INSERT INTO promotions (
+                            restaurant_name, 
+                            logo_path, 
+                            applicable_days_text, 
+                            discount_rate, 
+                            address, 
+                            valid_from, 
+                            valid_until, 
+                            valid_period_text, 
+                            source, 
+                            region, 
+                            ai_summary
+                        )
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         """,
                         (
                             promo.get("restaurant_name"),
                             promo.get("logo_path"),
                             promo.get("applicable_days_text"),
-                            promo.get("region"),
+                            None,  # discount_rate
                             promo.get("address"),
+                            None,  # valid_from
+                            None,  # valid_until
                             promo.get("valid_period_text"),
-                            promo.get("valid_from"),
-                            promo.get("valid_until"),
+                            promo.get("source"),
+                            promo.get("region"),
+                            None,  # ai_summary
                         ),
                     )
                 conn.commit()
@@ -135,25 +143,29 @@ def scrape_santander_promotions():
     results = []
     for idx, promo in enumerate(promos, start=1):
         logging.info(f"Getting promotion {idx}...")
-        # -- Image download block --
-        figure_tag: Optional[Tag] = cast(Optional[Tag], promo.find("figure"))
-        if figure_tag is not None:
-            img_tag = figure_tag.find("img")
-        else:
-            img_tag = None
-        logo_path = (
-            download_image(img_tag["src"], "scraped_data/logos")
-            if (img_tag and isinstance(img_tag, Tag) and img_tag.has_attr("src"))
-            else "No logo"
-        )
-        if img_tag and isinstance(img_tag, Tag) and img_tag.has_attr("src"):
-            logging.info(f"Promotion {idx}: Downloading image logo")
-        else:
-            logging.info(f"Promotion {idx}: Skipping image logo download")
+        # -- Image capture block using Selenium --
+        try:
+            # Locate the image element for the current promotion using its index
+            img_element = driver.find_element(
+                By.XPATH,
+                f"(//div[contains(@class, 'discount border-full')]//figure//img)[{idx}]",
+            )
+            screenshot_path = os.path.join(
+                "scraped_data/logos", img_element.get_attribute("src").split("/")[-1]
+            )
+            img_element.screenshot(screenshot_path)
+            logo_path = screenshot_path
+            logging.info(
+                f"Promotion {idx}: Image captured via Selenium screenshot: {screenshot_path}"
+            )
+        except Exception as e:
+            logging.error(f"Promotion {idx}: Failed to capture image via Selenium: {e}")
+            logo_path = "No logo"
 
         # -- Text extraction block --
-        text_div = promo.find("div", class_="flex-column justify-content-center")
-        if isinstance(text_div, Tag):
+        # Use a CSS selector to target the div with multiple classes that contains the text data
+        text_div = promo.select_one("div.d-flex.flex-column.justify-content-center")
+        if text_div:
             p_tags = text_div.find_all("p")
             restaurant_name = (
                 p_tags[0].get_text(strip=True) if len(p_tags) > 0 else "No name"
@@ -161,8 +173,9 @@ def scrape_santander_promotions():
             applicable_days_text = (
                 p_tags[1].get_text(strip=True) if len(p_tags) > 1 else "No dates"
             )
-            if len(p_tags) > 2 and isinstance(p_tags[2], Tag):
+            if len(p_tags) > 2:
                 spans = p_tags[2].find_all("span")
+                # The second span contains the region text
                 region = (
                     spans[1].get_text(strip=True) if len(spans) > 1 else "No region"
                 )
@@ -228,16 +241,26 @@ def scrape_santander_promotions():
             "region": region,
             "address": address,
             "valid_period_text": valid_period_text,
-            "source": "Santander",
+            "source": "Santander Chile",
         }
         results.append(promo_data)
-        # break  # Remove this line to scrape all promotions
+        break  # Remove this line to scrape all promotions
 
     driver.quit()
     logging.info(f"Finishing up, extracted {len(results)} promotion(s).")
     if results:
-        store_promotions(results)  # new call to store promotions in DB
+        store_promotions(results)  # store promotions in DB
         logging.info(f"Stored {len(results)} promotion(s) into the database.")
+
+        # Export promotions to a JSON file
+        json_folder = "scraped_data/santander"
+        if not os.path.exists(json_folder):
+            os.makedirs(json_folder)
+        json_file = os.path.join(json_folder, "promotions.json")
+        with open(json_file, "w", encoding="utf-8") as f:
+            json.dump(results, f, ensure_ascii=False, indent=4)
+        logging.info(f"Exported promotions to {json_file}")
+
         for idx, promo in enumerate(results, 1):
             logging.info(f"{idx}. {promo['restaurant_name']} - {promo['logo_path']}")
     else:

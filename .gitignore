@@ -27,3 +27,6 @@ env/
 # IDE / Editor directories
 .vscode/
 .idea/
+
+# scraped data
+backend/scraped_data/

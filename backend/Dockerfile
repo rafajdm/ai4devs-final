@@ -6,6 +6,9 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+# Create the scraped_data/logos directory and grant write permissions
+RUN mkdir -p /app/scraped_data/logos && chmod -R 777 /app/scraped_data
+
 # Install system dependencies for running browsers
 RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
