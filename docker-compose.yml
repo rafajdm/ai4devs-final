@@ -33,6 +33,7 @@ services:
     container_name: ai4devs-frontend
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     # Map host port 80 to container port 80 since the final image uses nginx exposing port 80
     ports:
       - "80:80"

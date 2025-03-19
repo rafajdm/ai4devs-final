@@ -8,7 +8,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # Copy the rest of the application and build it with Vite
-COPY . .
+COPY . ./
 RUN npm run build
 
 # Stage 2: Serve the built application using nginx
