@@ -22,9 +22,8 @@ ai4devs-final/
 │   │   ├── ai/              # LangGraph + Mistral integration
 │   │   │   └── __init__.py
 │   │   ├── db/              # Database layer
-│   │   │   ├── models.py    # SQLAlchemy models (Promotions, etc.)
-│   │   │   ├── schema.py    # Pydantic schemas (if separated)
-│   │   │   ├── migrations/  # DB migration files (Alembic, etc.)
+│   │   │   ├── connect.py   # Example for psycopg2 connection logic
+│   │   │   ├── queries.py   # Raw SQL queries or helper functions
 │   │   │   └── __init__.py
 │   │   ├── core/            # Core settings, configs, and utilities
 │   │   │   ├── config.py    # App-wide settings (e.g. DB URL)
@@ -82,8 +81,8 @@ ai4devs-final/
    - LangGraph + Mistral integration to process or enrich scraped data (e.g., generating short summaries).
 
 4. **Database Layer** (`db/`):
-   - Contains **SQLAlchemy** models (`models.py`) and optional schemas (`schema.py`).
-   - **migrations/** folder for Alembic files if you choose to manage DB schema changes.
+   - Contains Python modules for interacting with **PostgreSQL** using **psycopg2** (raw SQL queries).
+   - If needed, consider manual migrations or basic SQL scripts for schema changes.
    - Manages connections and queries to **PostgreSQL**.
 
 5. **Core Config** (`core/`):
