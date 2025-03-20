@@ -64,5 +64,8 @@ This directory contains the backend code for the Promo-Finder MVP. It includes t
 - `requirements.txt`: Lists the Python dependencies.
 - `Dockerfile`: Dockerfile for containerizing the backend.
 
+## Folder Structure
+Refer to [docs/architectural-pattern.md](../docs/architectural-pattern.md) for the updated modular folder layout (e.g. app/api/v1, app/db, app/core, etc.).
+
 ## License
 Information about the project's license.

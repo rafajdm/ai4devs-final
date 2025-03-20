@@ -1,15 +1,10 @@
 import os
 import psycopg2
+from app.core.config import DB_URL  # new import
 
 
 def test_connection():
-    conn = psycopg2.connect(
-        host=os.getenv("DB_HOST", "localhost"),
-        port=os.getenv("DB_PORT", "5432"),
-        dbname=os.getenv("DB_NAME", "promotions"),
-        user=os.getenv("DB_USER", "your_db_user"),
-        password=os.getenv("DB_PASSWORD", "your_db_password"),
-    )
+    conn = psycopg2.connect(DB_URL)
     cursor = conn.cursor()
     cursor.execute("SELECT version();")
     version = cursor.fetchone()
@@ -19,13 +14,7 @@ def test_connection():
 
 
 def test_table_exists():
-    conn = psycopg2.connect(
-        host=os.getenv("DB_HOST", "localhost"),
-        port=os.getenv("DB_PORT", "5432"),
-        dbname=os.getenv("DB_NAME", "promotions"),
-        user=os.getenv("DB_USER", "your_db_user"),
-        password=os.getenv("DB_PASSWORD", "your_db_password"),
-    )
+    conn = psycopg2.connect(DB_URL)
     cursor = conn.cursor()
     cursor.execute(
         """

@@ -13,6 +13,7 @@ import time  # Add this import
 from typing import Optional  # add this import if not already present
 from typing import cast  # ensure cast is imported
 import psycopg2  # new import for database storage
+from app.core.config import DB_URL  # new import
 
 # Configure logging to output debug messages to the console
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -32,13 +33,9 @@ def setup_driver():
 
 
 def store_promotions(promos):
-    db_host = os.environ.get("DB_HOST", "localhost")
-    db_name = os.environ.get("DB_NAME", "dbname")
-    db_user = os.environ.get("DB_USER", "user")
-    db_password = os.environ.get("DB_PASSWORD", "password")
-    DATABASE_URL = f"postgresql://{db_user}:{db_password}@{db_host}:5432/{db_name}"
     try:
-        with psycopg2.connect(DATABASE_URL) as conn:
+        conn = psycopg2.connect(DB_URL)
+        with conn:
             with conn.cursor() as cur:
                 # Create table if it does not exist
                 cur.execute(
