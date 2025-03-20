@@ -37,7 +37,6 @@ def store_promotions(promos):
         conn = psycopg2.connect(DB_URL)
         with conn:
             with conn.cursor() as cur:
-                # Create table if it does not exist
                 cur.execute(
                     """
                     CREATE TABLE IF NOT EXISTS promotions (
@@ -57,7 +56,19 @@ def store_promotions(promos):
                     )
                     """
                 )
+                # Fetch existing promotions for the source to prevent duplicates
+                cur.execute(
+                    "SELECT restaurant_name, valid_period_text FROM promotions WHERE source = %s",
+                    ("Santander Chile",),
+                )
+                existing = cur.fetchall()
+                existing_set = {(row[0], row[1]) for row in existing}
+
                 for promo in promos:
+                    key = (promo.get("restaurant_name"), promo.get("valid_period_text"))
+                    if key in existing_set:
+                        logging.info(f"Skipping duplicate promotion: {key}")
+                        continue
                     cur.execute(
                         """
                         INSERT INTO promotions (
@@ -89,6 +100,7 @@ def store_promotions(promos):
                             None,  # ai_summary
                         ),
                     )
+                    existing_set.add(key)
                 conn.commit()
     except Exception as e:
         logging.error(f"Database error: {e}")
@@ -241,7 +253,7 @@ def scrape_santander_promotions():
             "source": "Santander Chile",
         }
         results.append(promo_data)
-        break  # Remove this line to scrape all promotions
+        # break  # Remove this line to scrape all promotions
 
     driver.quit()
     logging.info(f"Finishing up, extracted {len(results)} promotion(s).")
