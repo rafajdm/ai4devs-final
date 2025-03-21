@@ -1,6 +1,6 @@
-# Recommended Folder Structure & Architectural Pattern
+# Folder Structure & Architectural Pattern
 
-Below is a **recommended folder structure** for the Promo-Finder MVP, along with an overview of the **layered / modular monolith** approach. This structure groups related code logically while remaining lean enough for an MVP.
+Below is a **folder structure** for the Promo-Finder MVP, along with an overview of the **layered / modular monolith** approach. This structure groups related code logically while remaining lean enough for an MVP.
 
 ---
 
