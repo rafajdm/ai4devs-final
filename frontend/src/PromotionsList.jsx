@@ -4,7 +4,7 @@ const PromotionsList = () => {
   const [promotions, setPromotions] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/promotions')
+    fetch(`${import.meta.env.VITE_API_URL}/promotions`)
       .then(response => response.json())
       .then(data => setPromotions(data))
       .catch(error => console.error('Error fetching promotions:', error));
@@ -16,7 +16,7 @@ const PromotionsList = () => {
         <div key={promo.id} className="bg-gray-800 text-white shadow-lg rounded-lg p-6 border border-gray-700">
           <h2 className="text-xl font-bold mb-2">{promo.restaurant_name}</h2>
           {promo.logo_path && (
-            <img src={`http://localhost:8000/${promo.logo_path}`} alt={`${promo.restaurant_name} logo`} className="w-full h-32 object-contain mb-4"/>
+            <img src={`${import.meta.env.VITE_API_URL}/${promo.logo_path}`} alt={`${promo.restaurant_name} logo`} className="w-full h-32 object-contain mb-4"/>
           )}
           <p className="mb-1"><strong>Discount:</strong> {promo.discount_rate ?? 'N/A'}</p>
           <p className="mb-1"><strong>Valid Days:</strong> {promo.applicable_days_text ?? 'N/A'}</p>

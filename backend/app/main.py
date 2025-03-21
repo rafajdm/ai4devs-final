@@ -2,8 +2,6 @@ from fastapi import FastAPI
 from app.scraping.scraper import scrape_santander_promotions
 from dotenv import load_dotenv
 import os
-from fastapi.responses import JSONResponse
-import psycopg2
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import promotions, scrape, ai_process  # new
@@ -11,11 +9,12 @@ from app.api.v1 import promotions, scrape, ai_process  # new
 # Load environment variables from a .env file
 load_dotenv()
 
+allowed_origins = [os.getenv("FRONTEND_URL", "*")]
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

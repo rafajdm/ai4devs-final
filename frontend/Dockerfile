@@ -18,7 +18,7 @@ FROM nginx:1.21-alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Expose port 80 for serving the application
-EXPOSE 80
+EXPOSE 8080
 
 # Start nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]
