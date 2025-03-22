@@ -15,7 +15,7 @@ CLOUD_SQL_CONNECTION_NAME = os.getenv("CLOUD_SQL_CONNECTION_NAME", None)
 if CLOUD_SQL_CONNECTION_NAME:
     DB_URL = os.getenv(
         "DB_URL",
-        f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}?host=/cloudsql/{CLOUD_SQL_CONNECTION_NAME}",
+        f"postgresql://{DB_USER}:{DB_PASSWORD}@/{DB_NAME}?host=/cloudsql/{CLOUD_SQL_CONNECTION_NAME}",
     )
 
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")

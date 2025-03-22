@@ -14,10 +14,13 @@ RUN npm run build
 # Stage 2: Serve the built application using nginx
 FROM nginx:1.21-alpine
 
+# Copy custom config that listens on 8080
+COPY default.conf /etc/nginx/conf.d/default.conf
+
 # Copy the build output from the builder stage to nginx's html directory
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 80 for serving the application
+# Expose port 8080 for serving the application
 EXPOSE 8080
 
 # Start nginx in the foreground
