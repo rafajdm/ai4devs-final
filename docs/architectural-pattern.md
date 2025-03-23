@@ -44,13 +44,14 @@ ai4devs-final/
 │   ├── package.json          # NPM or Yarn configuration
 │   ├── vite.config.js        # Vite config (if using Vite)
 │   ├── src/                  # Source code for the React app
+│   │   ├── assets/           # Static assets (images, fonts, etc.)
 │   │   ├── components/       # Reusable components
 │   │   │   └── PromotionCard.jsx
-│   │   ├── pages/            # Page-level components (if needed)
+│   │   ├── pages/            # Views (formerly pages)
 │   │   │   └── Home.jsx
 │   │   ├── App.jsx           # Main App component
 │   │   └── main.jsx          # Entry point (React DOM rendering)
-│   └── public/               # Public/static assets (favicons, images, etc.)
+│   └── public/               # Public folder remains for additional static assets
 │
 ├── docs/                     # Project documentation
 │   ├── product-overview.md
