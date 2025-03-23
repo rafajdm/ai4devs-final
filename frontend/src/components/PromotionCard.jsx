@@ -2,7 +2,7 @@ import React from 'react';
 
 const PromotionCard = ({ promotion }) => {
   return (
-    <div className="bg-gray-800 text-white shadow-lg rounded-lg p-6 border border-gray-700">
+    <div className="bg-gray-800 text-white shadow-lg rounded-lg p-6 border border-gray-700 border-2 border-yellow-500">
       <h2 className="text-xl font-bold mb-2">{promotion.restaurant_name}</h2>
       {promotion.logo_path && (
         <img
