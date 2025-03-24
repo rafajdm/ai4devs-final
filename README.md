@@ -48,6 +48,14 @@ docker-compose down
 
 This ensures everything shuts down cleanly.
 
+## Running Tests
+
+To execute tests in a dockerized environment with logging enabled, run:
+
+```bash
+docker-compose run backend pytest --capture=tee-sys --log-cli-level=INFO
+```
+
 ## Usage
 TBD
 

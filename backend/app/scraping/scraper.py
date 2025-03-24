@@ -106,6 +106,68 @@ def store_promotions(promos):
         logging.error(f"Database error: {e}")
 
 
+def extract_promotions_from_html(soup):
+    # Extract promotion data from the base HTML layout
+    main_div = soup.find("div", class_="row total mini")
+    if not main_div:
+        return []
+    promos = main_div.select("div.discount.border-full")
+    results = []
+    for idx, promo in enumerate(promos, start=1):
+        text_div = promo.select_one("div.d-flex.flex-column.justify-content-center")
+        if text_div:
+            p_tags = text_div.find_all("p")
+            restaurant_name = (
+                p_tags[0].get_text(strip=True) if len(p_tags) > 0 else "No name"
+            )
+            applicable_days_text = (
+                p_tags[1].get_text(strip=True) if len(p_tags) > 1 else "No dates"
+            )
+            if len(p_tags) > 2:
+                spans = p_tags[2].find_all("span")
+                region = (
+                    spans[1].get_text(strip=True) if len(spans) > 1 else "No region"
+                )
+            else:
+                region = "No region"
+        else:
+            restaurant_name = "No name"
+            applicable_days_text = "No dates"
+            region = "No region"
+        promo_data = {
+            "restaurant_name": restaurant_name,
+            "applicable_days_text": applicable_days_text,
+            "region": region,
+            "source": "Santander Chile",
+        }
+        results.append(promo_data)
+    return results
+
+
+def extract_promotion_detail_from_html(soup):
+    # Extract detail data from the detail overlay HTML layout
+    detail_promo = soup.find("div", id="detail-promo")
+    if not detail_promo:
+        return {}
+    description_div = detail_promo.find("div", class_="description")
+    if description_div:
+        li_elements = description_div.find_all("li")
+        address = (
+            li_elements[2].get_text(strip=True)
+            if len(li_elements) >= 3
+            else "No address"
+        )
+    else:
+        address = "No address"
+    valid_period_element = detail_promo.find("p", class_="bg-primary-sky")
+    valid_period_text = (
+        valid_period_element.get_text(strip=True).replace("Vigencia:", "").strip()
+        if valid_period_element
+        else "No valid period"
+    )
+    return {"address": address, "valid_period_text": valid_period_text}
+
+
 def scrape_santander_promotions():
     logging.info("Starting the scraper, accessing website...")
     driver = setup_driver()

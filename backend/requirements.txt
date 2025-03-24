@@ -7,3 +7,4 @@ beautifulsoup4
 requests
 selenium
 langgraph
+pytest==7.4.0
