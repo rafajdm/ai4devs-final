@@ -19,33 +19,26 @@ Below is a detailed description of each, including methods, expected payloads, a
 ## 1. `/promotions`
 
 ### **Endpoint**
+
 ```
 GET /promotions
 ```
 
 ### **Description**
+
 Returns a list of stored promotions from the database, possibly including AI-generated summaries.
 
 ### **Request Parameters**
+
 None (for the MVP, there is no pagination, filtering, or sorting).
 
-### **Response**
-- **Status 200**: An array of promotion objects with the following fields:
-  - `id` (number)
-  - `restaurant_name` (string)
-  - `logo_path` (string)
-  - `applicable_days_text` (string)
-  - `discount_rate` (string)
-  - `address` (string)
-  - `valid_from` (string in ISO format, e.g. "2025-03-08")
-  - `valid_until` (string in ISO format, e.g. "2025-04-01")
-  - `valid_period_text` (string)
-  - `source` (string)
-  - `region` (string)
-  - `ai_summary` (string)
-  - `created_at` (string in ISO format)
+### **Response** (example for `GET /promotions`)
+
+- **Status 200**: Each promotion object includes:
+  - `id`, `restaurant_name`, `days_of_week`, `ai_summary`, etc.
 
 ### **Example Response**
+
 ```json
 [
   {
@@ -60,8 +53,9 @@ None (for the MVP, there is no pagination, filtering, or sorting).
     "valid_period_text": "Valid throughout March",
     "source": "Santander Chile",
     "region": "Metropolitana",
-    "ai_summary": "Enjoy a 20% discount all weekdays.",
-    "created_at": "2025-03-07T10:15:30"
+    "created_at": "2025-03-07T10:15:30",
+    "days_of_week": "1,2,3",
+    "ai_summary": "AI-processed description or details"
   }
 ]
 ```
@@ -71,24 +65,29 @@ None (for the MVP, there is no pagination, filtering, or sorting).
 ## 2. `/scrape`
 
 ### **Endpoint**
+
 ```
 POST /scrape
 ```
 
 ### **Description**
+
 Manually triggers the scraping process for the target website (<https://banco.santander.cl/beneficios>), parses the promotional data, and stores the results in the database.
 
 ### **Request Body**
+
 None (the MVP does not require additional parameters to start the scrape).
 
 ### **Response**
+
 - **Status 200**: Scrape triggered successfully. The response may include a simple confirmation message.
 - **Status 500**: If the scraping process encounters an error.
 
 ### **Example Response**
+
 ```json
 {
-  "message": "Scraping initiated. Check logs or /promotions to see new data." 
+  "message": "Scraping initiated. Check logs or /promotions to see new data."
 }
 ```
 
@@ -97,21 +96,26 @@ None (the MVP does not require additional parameters to start the scrape).
 ## 3. `/ai-process`
 
 ### **Endpoint**
+
 ```
 POST /ai-process
 ```
 
 ### **Description**
-Triggers the AI summarization or text enrichment step for any promotions that have not yet been processed, or re-runs if needed.
+
+`POST /ai-process` finalizes complex parsing via AI, storing results in fields like `ai_summary` and updating relevant columns (e.g., `days_of_week`).
 
 ### **Request Body**
+
 None (MVP does not specify partial AI processing — it processes all unprocessed promotions).
 
 ### **Response**
+
 - **Status 200**: AI processing triggered successfully. May include a result count of updated promotions.
 - **Status 500**: If the AI processing encounters an error.
 
 ### **Example Response**
+
 ```json
 {
   "message": "AI processing completed.",
@@ -124,17 +128,15 @@ None (MVP does not specify partial AI processing — it processes all unprocesse
 ## Error Handling
 
 | Error Code | Description                                      |
-|------------|--------------------------------------------------|
+| ---------- | ------------------------------------------------ |
 | 400        | Bad Request - Usually malformed input            |
 | 404        | Not Found - Invalid endpoint or resource missing |
-| 500        | Internal Server Error - Uncaught server errors    |
-
+| 500        | Internal Server Error - Uncaught server errors   |
 
 ## Authentication & Security (MVP)
 
 - There is **no authentication** in this MVP.
 - For a production environment, consider adding API keys or other secure mechanisms.
-
 
 ## Further Extensions
 
