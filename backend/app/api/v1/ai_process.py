@@ -171,7 +171,7 @@ def call_mistral(state):
         "temperature": 0.0,
     }
 
-    time.sleep(2)  # Add delay to prevent rate limits
+    time.sleep(1)  # Reduce delay to 1 second
 
     try:
         logging.info("Calling Mistral API with payload: %s", payload)
@@ -244,14 +244,15 @@ def call_mistral_api(applicable_days_text: str, valid_period_text: str) -> dict:
 
 @router.post("")
 def process_ai():
-    """Processes promotions using LangGraph and logs the AI response for testing."""
+    """Processes promotions using LangGraph and updates the database with AI response."""
     logging.info("Starting AI processing.")
 
     try:
         with psycopg2.connect(config.DB_URL) as conn:
             with conn.cursor() as cur:
+                # Fetch all promotions without an AI summary (removing limit)
                 cur.execute(
-                    "SELECT id, applicable_days_text, valid_period_text FROM promotions WHERE ai_summary IS NULL LIMIT 1;"
+                    "SELECT id, applicable_days_text, valid_period_text FROM promotions WHERE ai_summary IS NULL;"
                 )
                 promotions = cur.fetchall()
                 logging.info("Fetched %d promotions.", len(promotions))
@@ -266,7 +267,39 @@ def process_ai():
                             json.dumps(result, indent=4, ensure_ascii=False),
                         )
 
-                return {"message": "Processed promotions and logged AI responses."}
+                        # Convert days_of_week list to a comma-separated string
+                        days_of_week_str = ",".join(
+                            map(str, result.get("days_of_week", []))
+                        )
+
+                        # Update database with AI processed data
+                        cur.execute(
+                            """
+                            UPDATE promotions
+                            SET discount_rate = %s,
+                                days_of_week = %s,
+                                valid_from = %s,
+                                valid_until = %s,
+                                ai_summary = %s
+                            WHERE id = %s;
+                            """,
+                            (
+                                result.get("discount_rate"),
+                                days_of_week_str,
+                                result.get("valid_from"),
+                                result.get("valid_until"),
+                                json.dumps(result, ensure_ascii=False),
+                                promotion_id,
+                            ),
+                        )
+                        conn.commit()
+                        logging.info(
+                            "Updated promotion ID %s in database.", promotion_id
+                        )
+
+                    time.sleep(1)  # Reduce API delay to 1 second
+
+                return {"message": "Processed and updated all promotions."}
 
     except Exception as e:
         logging.error("Error processing AI: %s", e, exc_info=True)
