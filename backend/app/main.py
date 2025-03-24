@@ -10,7 +10,7 @@ from app.api.v1 import promotions, scrape, ai_process  # new
 load_dotenv()
 
 allowed_origins = [os.getenv("FRONTEND_URL", "*")]
-app = FastAPI()
+app = FastAPI(redirect_slashes=False)
 
 app.add_middleware(
     CORSMiddleware,

@@ -19,10 +19,13 @@ const SearchFilters = ({ onApplyFilters, onClearFilters }) => {
         value={region}
         onChange={(e) => setRegion(e.target.value)}
       >
-        <option value="">Select Region</option>
+        <option value="">All</option>
         <option value="Metropolitana">Metropolitana</option>
+        <option value="Bío-Bío">Bío-Bío</option>
+        <option value="Antofagasta">Antofagasta</option>
+        <option value="Tarapacá">Tarapacá</option>
+        <option value="Maule, Metropolitana">Maule, Metropolitana</option>
         <option value="Valparaíso">Valparaíso</option>
-        <option value="Biobío">Biobío</option>
       </select>
       <label className="flex items-center space-x-2 text-gray-900 text-lg">
         <input

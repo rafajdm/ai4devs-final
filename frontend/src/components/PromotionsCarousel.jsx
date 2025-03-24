@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 const INITIAL_PAGE = 1;
 const PAGE_SIZE = 10;
 
-const PromotionsCarousel = () => {
+const PromotionsCarousel = ({ filters }) => {
   const [promotions, setPromotions] = useState([]);
   const [page, setPage] = useState(INITIAL_PAGE);
   const [loading, setLoading] = useState(false);
@@ -17,11 +17,13 @@ const PromotionsCarousel = () => {
   const loadPromotions = async (pageNumber) => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/promotions?page=${pageNumber}&page_size=${PAGE_SIZE}`
-      );
+      const params = new URLSearchParams({
+        page: pageNumber,
+        page_size: PAGE_SIZE,
+        ...(filters.restaurantName && { restaurant_name: filters.restaurantName }),
+        ...(filters.region && { region: filters.region })
+      });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/promotions?${params.toString()}`);
       const data = await res.json();
       setPromotions((prev) => [...prev, ...data]);
       setPage(pageNumber);
@@ -38,6 +40,14 @@ const PromotionsCarousel = () => {
   useEffect(() => {
     loadPromotions(INITIAL_PAGE);
   }, []);
+
+  useEffect(() => {
+    // Reset promotions when filters change
+    setPromotions([]);
+    setPage(INITIAL_PAGE);
+    setHasMore(true);
+    loadPromotions(INITIAL_PAGE);
+  }, [filters]);
 
   const settings = {
     dots: false,
