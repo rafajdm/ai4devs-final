@@ -20,10 +20,14 @@ const PromotionsCarousel = ({ filters }) => {
       const params = new URLSearchParams({
         page: pageNumber,
         page_size: PAGE_SIZE,
-        ...(filters.restaurantName && { restaurant_name: filters.restaurantName }),
-        ...(filters.region && { region: filters.region })
+        ...(filters.restaurantName && {
+          restaurant_name: filters.restaurantName,
+        }),
+        ...(filters.region && { region: filters.region }),
       });
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/promotions?${params.toString()}`);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/promotions/?${params.toString()}`
+      );
       const data = await res.json();
       setPromotions((prev) => [...prev, ...data]);
       setPage(pageNumber);

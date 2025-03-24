@@ -20,7 +20,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/scraped_data", StaticFiles(directory="scraped_data"), name="scraped_data")
+# Mount static files
+app.mount(
+    "/scraped_data",
+    StaticFiles(directory="scraped_data"),
+    name="scraped_data",
+)
 
 app.include_router(promotions.router)
 app.include_router(scrape.router)
