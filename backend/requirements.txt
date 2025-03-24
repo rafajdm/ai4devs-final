@@ -6,3 +6,4 @@ psycopg2-binary
 beautifulsoup4
 requests
 selenium
+langgraph

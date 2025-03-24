@@ -1,0 +1,2 @@
+ALTER TABLE promotions
+ADD COLUMN IF NOT EXISTS days_of_week VARCHAR;
