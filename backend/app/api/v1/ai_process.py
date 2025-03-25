@@ -23,7 +23,7 @@ class AIProcessState(TypedDict):
 
 logging.basicConfig(level=logging.INFO)
 
-router = APIRouter(prefix="/ai-process", tags=["ai-process"])
+router = APIRouter(prefix="/ai-process", tags=["ai-process"])  # prefix stays as is
 
 
 # Regex for extracting dates
@@ -300,6 +300,60 @@ def process_ai():
                     time.sleep(1)  # Reduce API delay to 1 second
 
                 return {"message": "Processed and updated all promotions."}
+
+    except Exception as e:
+        logging.error("Error processing AI: %s", e, exc_info=True)
+        return {"error": "An error occurred during AI processing."}
+
+
+@router.post("/{promotion_id}")
+def process_single_promotion(promotion_id: int):
+    """Processes a single promotion using LangGraph and updates the database."""
+    logging.info(f"Starting AI processing for promotion ID: {promotion_id}")
+
+    try:
+        with psycopg2.connect(config.DB_URL) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT applicable_days_text, valid_period_text FROM promotions WHERE id = %s;",
+                    (promotion_id,),
+                )
+                result = cur.fetchone()
+
+                if not result:
+                    return {"error": "Promotion not found"}
+
+                applicable_days_text, valid_period_text = result
+                result = call_mistral_api(applicable_days_text, valid_period_text)
+
+                if result:
+                    days_of_week_str = ",".join(
+                        map(str, result.get("days_of_week", []))
+                    )
+
+                    cur.execute(
+                        """
+                        UPDATE promotions
+                        SET discount_rate = %s,
+                            days_of_week = %s,
+                            valid_from = %s,
+                            valid_until = %s,
+                            ai_summary = %s
+                        WHERE id = %s;
+                        """,
+                        (
+                            result.get("discount_rate"),
+                            days_of_week_str,
+                            result.get("valid_from"),
+                            result.get("valid_until"),
+                            json.dumps(result, ensure_ascii=False),
+                            promotion_id,
+                        ),
+                    )
+                    conn.commit()
+                    return {"message": f"Updated promotion ID {promotion_id}"}
+
+                return {"error": "Failed to process promotion"}
 
     except Exception as e:
         logging.error("Error processing AI: %s", e, exc_info=True)

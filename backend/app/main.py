@@ -20,16 +20,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files
+# Define API prefix
+API_V1_PREFIX = "/api/v1"
+
+# Mount static files at root level for easier access
 app.mount(
-    "/scraped_data",
+    "/scraped_data",  # Changed from /api/v1/scraped_data to /scraped_data
     StaticFiles(directory="scraped_data"),
     name="scraped_data",
 )
 
-app.include_router(promotions.router)
-app.include_router(scrape.router)
-app.include_router(ai_process.router)
+# Mount routers with the API prefix
+app.include_router(promotions.router, prefix=API_V1_PREFIX)
+app.include_router(scrape.router, prefix=API_V1_PREFIX)
+app.include_router(ai_process.router, prefix=API_V1_PREFIX)
 
 if __name__ == "__main__":
     import uvicorn

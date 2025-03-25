@@ -52,3 +52,37 @@ def get_promotions(
     cur.close()
     conn.close()
     return promotions
+
+
+def get_promotion_by_id(promotion_id: int):
+    conn = psycopg2.connect(DB_URL)
+    cur = conn.cursor()
+    query = """
+    SELECT id, restaurant_name, logo_path, applicable_days_text, discount_rate, address,
+           valid_from, valid_until, valid_period_text, source, region, ai_summary, created_at
+    FROM promotions
+    WHERE id = %s
+    """
+    cur.execute(query, (promotion_id,))
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return None
+
+    return {
+        "id": row[0],
+        "restaurant_name": row[1],
+        "logo_path": row[2],
+        "applicable_days_text": row[3],
+        "discount_rate": row[4],
+        "address": row[5],
+        "valid_from": row[6],
+        "valid_until": row[7],
+        "valid_period_text": row[8],
+        "source": row[9],
+        "region": row[10],
+        "ai_summary": row[11],
+        "created_at": row[12],
+    }

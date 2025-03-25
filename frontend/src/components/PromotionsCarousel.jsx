@@ -27,7 +27,7 @@ const PromotionsCarousel = ({ filters }) => {
         ...(filters.region && { region: filters.region }),
       });
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/promotions/?${params.toString()}`
+        `${import.meta.env.VITE_API_URL}/api/v1/promotions/?${params.toString()}`
       );
       const data = await res.json();
       setPromotions((prev) => [...prev, ...data]);

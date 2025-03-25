@@ -1,27 +1,23 @@
 # Promo-Finder MVP API Specification
 
-This document describes the available API endpoints for the Promo-Finder MVP.
-
----
-
 ## Overview
 
-The API is built with **FastAPI** and serves three core endpoints:
+The API is built with **FastAPI** and serves three core endpoints under the `/api/v1` prefix:
 
-1. **`/promotions`**
-2. **`/scrape`**
-3. **`/ai-process`**
+1. **`/api/v1/promotions`**
+2. **`/api/v1/scrape`**
+3. **`/api/v1/ai-process`**
 
 Below is a detailed description of each, including methods, expected payloads, and sample responses.
 
 ---
 
-## 1. `/promotions`
+## 1. `/api/v1/promotions`
 
 ### **Endpoint**
 
 ```
-GET /promotions
+GET /api/v1/promotions
 ```
 
 ### **Description**
@@ -32,7 +28,7 @@ Returns a list of stored promotions from the database, possibly including AI-gen
 
 None (for the MVP, there is no pagination, filtering, or sorting).
 
-### **Response** (example for `GET /promotions`)
+### **Response** (example for `GET /api/v1/promotions`)
 
 - **Status 200**: Each promotion object includes:
   - `id`, `restaurant_name`, `days_of_week`, `ai_summary`, etc.
@@ -62,12 +58,12 @@ None (for the MVP, there is no pagination, filtering, or sorting).
 
 ---
 
-## 2. `/scrape`
+## 2. `/api/v1/scrape`
 
 ### **Endpoint**
 
 ```
-POST /scrape
+POST /api/v1/scrape
 ```
 
 ### **Description**
@@ -93,17 +89,20 @@ None (the MVP does not require additional parameters to start the scrape).
 
 ---
 
-## 3. `/ai-process`
+## 3. `/api/v1/ai-process`
 
 ### **Endpoint**
 
 ```
-POST /ai-process
+POST /api/v1/ai-process
+POST /api/v1/ai-process/{promotion_id}
 ```
 
 ### **Description**
 
-`POST /ai-process` finalizes complex parsing via AI, storing results in fields like `ai_summary` and updating relevant columns (e.g., `days_of_week`).
+`POST /api/v1/ai-process` finalizes complex parsing via AI, storing results in fields like `ai_summary` and updating relevant columns (e.g., `days_of_week`).
+
+`POST /api/v1/ai-process/{promotion_id}` processes a single promotion by ID.
 
 ### **Request Body**
 
