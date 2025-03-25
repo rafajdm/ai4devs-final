@@ -96,8 +96,7 @@ const PromotionDetail = ({ promotionId, onClose, isOpen }) => {
                 <p><strong>Días aplicables:</strong> {promotion.applicable_days_text ?? "N/A"}</p>
                 <p><strong>Dirección:</strong> {promotion.address ?? "N/A"}</p>
                 <p><strong>Región:</strong> {promotion.region ?? "N/A"}</p>
-                <p><strong>Válido desde:</strong> {promotion.valid_from ? new Date(promotion.valid_from).toLocaleDateString() : "-"}</p>
-                <p><strong>Válido hasta:</strong> {promotion.valid_until ? new Date(promotion.valid_until).toLocaleDateString() : "-"}</p>
+                <p><strong>Válido hasta:</strong> {promotion.valid_until ? new Date(promotion.valid_until).toLocaleDateString('es-CL', { month: '2-digit', day: '2-digit', year: 'numeric' }) : "-"}</p>
                 <p><strong>Fuente:</strong> {promotion.source ?? "N/A"}</p>
               </div>
             </>
