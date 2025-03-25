@@ -132,7 +132,7 @@ const PromotionsCarousel = ({ filters }) => {
         </div>
       ) : promotions.length === 0 ? (
         <div className="text-center text-gray-600 py-12">
-          No promotions found with the current filters
+          No se encontraron promociones con los filtros actuales
         </div>
       ) : (
         <Slider {...settings}>

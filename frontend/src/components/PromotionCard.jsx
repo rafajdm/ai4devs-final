@@ -23,10 +23,10 @@ const PromotionCard = ({ promotion }) => {
 
         <div className="flex-grow ml-6 md:ml-4 text-left">
           <p className="mb-4 md:mb-2 text-base">
-            <strong>Discount:</strong> {promotion.discount_rate ?? "N/A"}
+            <strong>Descuento:</strong> {promotion.discount_rate ?? "N/A"}
           </p>
           <p className="text-base">
-            <strong>Validity:</strong> {promotion.valid_period_text ?? "N/A"}
+            <strong>Validez:</strong> {promotion.valid_period_text ?? "N/A"}
           </p>
         </div>
       </div>

@@ -26,7 +26,7 @@ const SearchFilters = ({ onApplyFilters, onClearFilters }) => {
         className="md:hidden fixed top-[70px] right-4 z-20 bg-blue-600 text-white p-2 rounded-md shadow-lg"
         onClick={toggleFilters}
       >
-        {isOpen ? "Close Filters" : "Show Filters"}
+        {isOpen ? "Cerrar Filtros" : "Ver Filtros"}
       </button>
 
       {/* Filters Container - Fixed toolbar on desktop, overlay on mobile */}
@@ -39,22 +39,20 @@ const SearchFilters = ({ onApplyFilters, onClearFilters }) => {
         `}
       >
         <div className="flex md:flex-row flex-col md:items-center items-start md:justify-center gap-6 p-8 md:p-4 h-full">
-          <span className="text-gray-900 font-medium text-lg">
-            Search Filters:
-          </span>
+          <span className="text-gray-900 font-medium text-lg">Filtros:</span>
           <input
             type="text"
-            placeholder="Restaurant Name"
+            placeholder="Nombre del Restaurante"
             className="px-4 py-3 border border-gray-500 rounded-md text-gray-900 bg-white md:w-1/4 w-full"
             value={restaurantName}
             onChange={(e) => setRestaurantName(e.target.value)}
           />
           <select
-            className="px-4 py-3 border border-gray-500 rounded-md text-gray-900 bg-white md:w-1/5 w-full"
+            className="px-4 py-3 border border-gray-500 rounded-md text-gray-900 bg-white md:w-1/5 w-full h-12 appearance-none"
             value={region}
             onChange={(e) => setRegion(e.target.value)}
           >
-            <option value="">All</option>
+            <option value="">Todas</option>
             <option value="Metropolitana">Metropolitana</option>
             <option value="Bío-Bío">Bío-Bío</option>
             <option value="Antofagasta">Antofagasta</option>
@@ -68,20 +66,20 @@ const SearchFilters = ({ onApplyFilters, onClearFilters }) => {
               disabled
               className="form-checkbox text-gray-600"
             />
-            <span>Applies Today (Disabled)</span>
+            <span>Aplica Hoy (Deshabilitado)</span>
           </label>
           <div className="flex md:flex-row flex-col gap-4 md:w-auto w-full">
             <button
               className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-lg"
               onClick={handleApply}
             >
-              Apply
+              Aplicar
             </button>
             <button
               className="px-6 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition text-lg"
               onClick={handleClear}
             >
-              Clear
+              Limpiar
             </button>
           </div>
         </div>
