@@ -2,16 +2,16 @@ import React from "react";
 
 const PromotionCard = ({ promotion }) => {
   return (
-    <div className="bg-gray-800 text-white shadow-lg rounded-lg p-6 border border-gray-700 border-2 border-yellow-500 h-48 flex flex-col">
-      {/* Restaurant Name as Header */}
-      <h2 className="text-xl font-bold text-center pb-2 border-b border-gray-600">
+    <div
+      className="bg-gray-800 text-white shadow-lg rounded-lg p-6 border border-gray-700 border-2 border-yellow-500
+      md:h-48 min-h-[364px] md:min-h-[200px] flex flex-col justify-between mx-auto max-w-[95%] md:max-w-full"
+    >
+      <h2 className="text-xl md:text-xl font-bold text-center pb-3 border-b border-gray-600">
         {promotion.restaurant_name}
       </h2>
 
-      {/* Content Wrapper */}
-      <div className="flex flex-row items-center pt-2">
-        {/* Logo Section */}
-        <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center">
+      <div className="flex flex-row items-center flex-grow pt-6 md:pt-4">
+        <div className="flex-shrink-0 w-24 md:w-20 h-24 md:h-20 flex items-center justify-center">
           {promotion.logo_path && (
             <img
               src={`${import.meta.env.VITE_API_URL}/${promotion.logo_path}`}
@@ -21,12 +21,11 @@ const PromotionCard = ({ promotion }) => {
           )}
         </div>
 
-        {/* Details Section */}
-        <div className="flex-grow ml-4 text-left">
-          <p className="mb-1">
+        <div className="flex-grow ml-6 md:ml-4 text-left">
+          <p className="mb-4 md:mb-2 text-base">
             <strong>Discount:</strong> {promotion.discount_rate ?? "N/A"}
           </p>
-          <p className="mt-1">
+          <p className="text-base">
             <strong>Validity:</strong> {promotion.valid_period_text ?? "N/A"}
           </p>
         </div>

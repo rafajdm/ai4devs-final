@@ -13,6 +13,7 @@ const PromotionsCarousel = ({ filters }) => {
   const [page, setPage] = useState(INITIAL_PAGE);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [sliderRef, setSliderRef] = useState(null);
 
   const loadPromotions = async (pageNumber) => {
     setLoading(true);
@@ -53,6 +54,18 @@ const PromotionsCarousel = ({ filters }) => {
     loadPromotions(INITIAL_PAGE);
   }, [filters]);
 
+  const handlePrevious = () => {
+    if (sliderRef) {
+      sliderRef.slickPrev();
+    }
+  };
+
+  const handleNext = () => {
+    if (sliderRef) {
+      sliderRef.slickNext();
+    }
+  };
+
   const settings = {
     dots: false,
     infinite: false,
@@ -61,26 +74,31 @@ const PromotionsCarousel = ({ filters }) => {
     slidesToScroll: 1,
     lazyLoad: "progressive",
     nextArrow: (
-      <div className="text-8xl text-gray-100 bg-black/60 hover:bg-gray-700 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer absolute right-6 top-1/2 transform -translate-y-1/2 z-50 shadow-lg opacity-90">
+      <div className="text-4xl text-gray-100 bg-black/60 hover:bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 z-50 shadow-lg opacity-90">
         {">"}
       </div>
     ),
     prevArrow: (
-      <div className="text-8xl text-gray-100 bg-black/60 hover:bg-gray-700 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer absolute left-6 top-1/2 transform -translate-y-1/2 z-50 shadow-lg opacity-90">
+      <div className="text-4xl text-gray-100 bg-black/60 hover:bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 z-50 shadow-lg opacity-90">
         {"<"}
       </div>
     ),
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1280,
         settings: {
           slidesToShow: 2,
+          slidesToScroll: 1,
         },
       },
       {
         breakpoint: 768,
         settings: {
           slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: true, // Show arrows on mobile
+          centerMode: true,
+          centerPadding: "8px",
         },
       },
     ],
@@ -89,17 +107,47 @@ const PromotionsCarousel = ({ filters }) => {
         loadPromotions(page + 1);
       }
     },
+    ref: (slider) => setSliderRef(slider),
   };
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto py-8 px-8 mt-10 overflow-x-hidden">
-      <Slider {...settings}>
-        {promotions.map((promo) => (
-          <div key={promo.id} className="px-2">
-            <PromotionCard promotion={promo} />
-          </div>
-        ))}
-      </Slider>
+    <div className="w-full md:max-w-screen-xl mx-auto py-2 md:py-4 px-0 md:px-8 mt-8 md:mt-20 mb-16 overflow-x-hidden relative">
+      {/* Clickable minimal indicators */}
+      <span
+        onClick={handlePrevious}
+        className="md:hidden absolute left-2 top-1/2 -translate-y-1/2 z-10 text-white/80 text-3xl hover:text-white transition-colors cursor-pointer select-none"
+      >
+        &lt;
+      </span>
+      <span
+        onClick={handleNext}
+        className="md:hidden absolute right-2 top-1/2 -translate-y-1/2 z-10 text-white/80 text-3xl hover:text-white transition-colors cursor-pointer select-none"
+      >
+        &gt;
+      </span>
+
+      {loading && promotions.length === 0 ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      ) : promotions.length === 0 ? (
+        <div className="text-center text-gray-600 py-12">
+          No promotions found with the current filters
+        </div>
+      ) : (
+        <Slider {...settings}>
+          {promotions.map((promo) => (
+            <div key={promo.id} className="px-1 md:px-2">
+              <PromotionCard promotion={promo} />
+            </div>
+          ))}
+        </Slider>
+      )}
+      {loading && promotions.length > 0 && (
+        <div className="text-center py-4">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      )}
     </div>
   );
 };
