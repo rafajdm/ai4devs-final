@@ -2,6 +2,29 @@ import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { usePromotion } from "../hooks/usePromotion";
 
+const DaysOfWeek = ({ daysString }) => {
+  const days = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+  const activeDays = daysString ? daysString.split(',').map(Number) : [];
+
+  return (
+    <div className="flex gap-1">
+      {days.map((day, index) => {
+        const adjustedIndex = index === 0 ? 0 : index;
+        const isActive = activeDays.includes(adjustedIndex);
+        return (
+          <div
+            key={index}
+            className={`w-8 h-8 border border-gray-500 flex items-center justify-center rounded 
+              ${isActive ? 'bg-blue-500 text-white' : 'text-gray-400'}`}
+          >
+            {day}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const PromotionDetail = ({ promotionId, onClose, isOpen }) => {
   const { promotion, loading, error, mutate } = usePromotion(isOpen ? promotionId : null);
   const [updating, setUpdating] = useState(false);
@@ -93,11 +116,19 @@ const PromotionDetail = ({ promotionId, onClose, isOpen }) => {
               <div className="space-y-4">
                 <p><strong>Descuento:</strong> {promotion.discount_rate || "-"}</p>
                 <p><strong>Validez:</strong> {promotion.valid_period_text ?? "N/A"}</p>
-                <p><strong>Días aplicables:</strong> {promotion.applicable_days_text ?? "N/A"}</p>
+                <p><strong>Descripción:</strong> {promotion.applicable_days_text ?? "N/A"}</p>
                 <p><strong>Dirección:</strong> {promotion.address ?? "N/A"}</p>
                 <p><strong>Región:</strong> {promotion.region ?? "N/A"}</p>
                 <p><strong>Válido hasta:</strong> {promotion.valid_until ? new Date(promotion.valid_until).toLocaleDateString('es-CL', { month: '2-digit', day: '2-digit', year: 'numeric' }) : "-"}</p>
                 <p><strong>Fuente:</strong> {promotion.source ?? "N/A"}</p>
+                {promotion.days_of_week && (
+                  <div className="pt-4 border-t border-gray-600">
+                    <strong>Días aplicables:</strong>
+                    <div className="mt-2">
+                      <DaysOfWeek daysString={promotion.days_of_week} />
+                    </div>
+                  </div>
+                )}
               </div>
             </>
           )}

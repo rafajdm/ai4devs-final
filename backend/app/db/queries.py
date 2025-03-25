@@ -12,7 +12,8 @@ def get_promotions(
     cur = conn.cursor()
     base_query = """
     SELECT id, restaurant_name, logo_path, applicable_days_text, discount_rate, address,
-           valid_from, valid_until, valid_period_text, source, region, ai_summary, created_at
+           valid_from, valid_until, valid_period_text, source, region, ai_summary, created_at,
+           days_of_week
     FROM promotions
     """
     filters = []
@@ -47,6 +48,7 @@ def get_promotions(
                 "region": row[10],
                 "ai_summary": row[11],
                 "created_at": row[12],
+                "days_of_week": row[13],
             }
         )
     cur.close()
@@ -59,7 +61,8 @@ def get_promotion_by_id(promotion_id: int):
     cur = conn.cursor()
     query = """
     SELECT id, restaurant_name, logo_path, applicable_days_text, discount_rate, address,
-           valid_from, valid_until, valid_period_text, source, region, ai_summary, created_at
+           valid_from, valid_until, valid_period_text, source, region, ai_summary, created_at,
+           days_of_week
     FROM promotions
     WHERE id = %s
     """
@@ -85,4 +88,5 @@ def get_promotion_by_id(promotion_id: int):
         "region": row[10],
         "ai_summary": row[11],
         "created_at": row[12],
+        "days_of_week": row[13],
     }
